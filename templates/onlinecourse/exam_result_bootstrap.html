@@ -1,0 +1,60 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Results - {{ course.name }}</title>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+</head>
+<body class="bg-light">
+    <main class="container py-5">
+        <div class="card shadow-sm mx-auto" style="max-width: 800px;">
+            <div class="card-body p-4">
+                <div class="alert alert-success text-center">
+                    <h1 class="h3">Congratulations!</h1>
+                    <p class="mb-0">You have submitted your exam.</p>
+                </div>
+
+                <h2 class="h4">Exam Results</h2>
+                <p><strong>Course:</strong> {{ course.name }}</p>
+                <p><strong>Score:</strong> {{ grade }}/100</p>
+
+                <hr>
+
+                {% regroup choices by question as question_groups %}
+
+                {% for group in question_groups %}
+                    <section class="mb-4">
+                        <h3 class="h5">
+                            {{ forloop.counter }}. {{ group.grouper.content }}
+                        </h3>
+
+                        {% for choice in group.list %}
+                            <p class="mb-1">
+                                {{ choice.content }}
+                                {% if choice.is_correct %}
+                                    <span class="text-success">✓ Correct answer</span>
+                                {% else %}
+                                    <span class="text-danger">✗ Incorrect answer</span>
+                                {% endif %}
+                            </p>
+                        {% endfor %}
+                    </section>
+                {% empty %}
+                    <p>No submitted answers were found.</p>
+                {% endfor %}
+
+                <a href="{% url 'onlinecourse:index' %}"
+                   class="btn btn-primary mt-3">
+                    Back to Courses
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+```

@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ course.name }}</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+</head>
+<body class="bg-light">
+
+    <div class="container py-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h1 class="h3 mb-0">{{ course.name }}</h1>
+            </div>
+
+            <div class="card-body">
+                <h2 class="h5 mb-3">Course lessons</h2>
+
+                {% for lesson in course.lesson_set.all %}
+                    <div class="border rounded p-3 mb-3">
+                        <h3 class="h6">{{ lesson.title }}</h3>
+                        <p class="mb-0">{{ lesson.content }}</p>
+                    </div>
+                {% empty %}
+                    <p>No lessons available yet.</p>
+                {% endfor %}
+
+                <hr>
+
+                <h2 class="h5 mb-3">Exam questions</h2>
+
+                <form method="post"
+                      action="{% url 'onlinecourse:submit' course.id %}">
+                    {% csrf_token %}
+
+                    {% for question in course.question_set.all %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h3 class="h6">
+                                    {{ forloop.counter }}.
+                                    {{ question.content }}
+                                </h3>
+
+                                {% for choice in question.choice_set.all %}
+                                    <div class="form-check">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            name="choice_{{ question.id }}"
+                                            value="{{ choice.id }}"
+                                            id="choice_{{ choice.id }}"
+                                        >
+
+                                        <label
+                                            class="form-check-label"
+                                            for="choice_{{ choice.id }}">
+                                            {{ choice.content }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No questions available yet.</p>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary">
+                        Submit exam
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
